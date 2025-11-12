@@ -66,28 +66,28 @@ const HomePage = () => {
       id: "weather",
       title: "Current Weather",
       desc: "Get real-time weather data for any city worldwide.",
-      icon: <FaCloudSun className="text-yellow-400 text-5xl sm:text-6xl" />,
+      icon: <FaCloudSun className="text-yellow-400 text-5xl sm:text-5xl" />,
       path: "/weather",
     },
     {
       id: "forecast",
       title: "5-Day Forecast",
       desc: "See upcoming weather patterns and predictions.",
-      icon: <FaCalendarAlt className="text-purple-400 text-5xl sm:text-6xl" />,
+      icon: <FaCalendarAlt className="text-purple-400 text-5xl sm:text-5xl" />,
       path: "/forecast",
     },
     {
       id: "air",
       title: "Air Quality (AQI)",
       desc: "Check pollution and air quality levels anywhere.",
-      icon: <FaWind className="text-blue-400 text-5xl sm:text-6xl" />,
+      icon: <FaWind className="text-blue-400 text-5xl sm:text-5xl" />,
       path: "/air",
     },
     {
       id: "map",
       title: "Locate on Map",
       desc: "Find your city’s coordinates and view on Google Maps.",
-      icon: <FaMapMarkedAlt className="text-green-400 text-5xl sm:text-6xl" />,
+      icon: <FaMapMarkedAlt className="text-green-400 text-5xl sm:text-5xl" />,
       path: "/map",
     },
   ];
@@ -188,7 +188,7 @@ const HomePage = () => {
         </div>
 
         {/* Cards Section */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 place-items-center w-full max-w-6xl">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-8 place-items-center w-full max-w-5xl">
           {cards.map((card) => (
             <Link key={card.id} to={card.path} className="w-full flex justify-center">
               <motion.div
@@ -196,7 +196,7 @@ const HomePage = () => {
                 transition={{ type: "spring", stiffness: 200, damping: 18 }}
                 className="group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg border border-white/15 rounded-3xl shadow-xl aspect-square w-full max-w-[270px] xs:max-w-[280px] sm:max-w-[300px] md:max-w-[320px] lg:max-w-[340px] flex flex-col items-center justify-center text-center cursor-pointer overflow-hidden hover:border-purple-500 hover:shadow-purple-500/20 transition-all duration-300"
               >
-                <div className="flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/5 border border-white/10 mb-5 group-hover:scale-110 group-hover:bg-purple-500/10 transition-all duration-300">
+                <div className="flex items-center justify-center w-20 h-20 sm:w-18 sm:h-18 rounded-2xl bg-white/5 border border-white/10 mb-5 group-hover:scale-110 group-hover:bg-purple-500/10 transition-all duration-300">
                   {card.icon}
                 </div>
                 <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-2 group-hover:text-purple-400 transition-colors">

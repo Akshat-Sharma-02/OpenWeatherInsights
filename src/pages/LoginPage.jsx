@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { IoArrowBack } from "react-icons/io5";
@@ -7,6 +8,20 @@ import { auth, googleProvider, githubProvider, signInWithPopup } from "../fireba
 
 const LoginPage = () => {
   const navigate = useNavigate();
+
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    try {
+      const res = await axios.post("/api/login", { email, password });
+      alert(res.data.message);
+      navigate("/home");
+    } catch (err) {
+      alert(err.response?.data?.message || "Login failed");
+    }
+  };
 
   const handleLogin = async (provider) => {
     try {
@@ -70,7 +85,7 @@ const LoginPage = () => {
           </div>
 
           {/* Email Login Form */}
-          <form className="flex flex-col gap-4">
+          <form onSubmit={handleEmailLogin} className="flex flex-col gap-4">
             <div>
               <label className="block text-gray-300 mb-1 text-sm">Email *</label>
               <input

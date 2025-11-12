@@ -14,7 +14,7 @@ const firebaseConfig = {
   storageBucket: "openweatherapi-23c14.firebasestorage.app",
   messagingSenderId: "196331063967",
   appId: "1:196331063967:web:4433078f5c4ae49406f0aa",
-  measurementId: "G-YZVHLK42TQ",
+  measurementId: "G-YZVHLK42TQ"
 };
 
 const app = initializeApp(firebaseConfig);

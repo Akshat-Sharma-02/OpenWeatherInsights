@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { signOut } from "firebase/auth";
@@ -16,15 +17,38 @@ import {
 const HomePage = () => {
   const { user } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mongoUserData, setMongoUserData] = useState({ name: "", email: "" });
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
+  // 🔹 Fetch MongoDB user details if email/password login
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("user"));
+    if (localUser?.type === "mongo" && localUser.email) {
+      axios
+        .get(
+          `https://openweatherinsights.onrender.com/api/user?email=${localUser.email}`
+        )
+        .then((res) => {
+          setMongoUserData({
+            name: res.data.name,
+            email: res.data.email,
+          });
+        })
+        .catch((err) => console.error("Error fetching user:", err));
+    }
+  }, []);
+
+  // 🔸 Logout function
   const handleLogout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth); // Firebase logout
+    } catch {}
+    localStorage.removeItem("user"); // Remove Mongo session
     navigate("/");
   };
 
-  // ✅ Close dropdown when clicking outside
+  // ✅ Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -34,6 +58,13 @@ const HomePage = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // ✅ Get display name + email based on login type
+  const displayName =
+    mongoUserData.name || user?.displayName || "User";
+
+  const displayEmail =
+    mongoUserData.email || user?.email || "";
 
   const cards = [
     {
@@ -75,71 +106,72 @@ const HomePage = () => {
       }}
     >
       {/* Navbar */}
-        <nav className="w-full flex justify-between items-center px-5 sm:px-10 py-4 sm:py-6 backdrop-blur-md border-b border-white/10 relative z-50">
-          <div className="text-lg sm:text-2xl font-semibold tracking-tight text-white/90">
-            🌤️ <span className="text-purple-400">OpenWeather</span> Insights
+      <nav className="w-full flex justify-between items-center px-5 sm:px-10 py-4 sm:py-6 backdrop-blur-md border-b border-white/10 relative z-50">
+        <div className="text-lg sm:text-2xl font-semibold tracking-tight text-white/90">
+          🌤️ <span className="text-purple-400">OpenWeather</span> Insights
+        </div>
+
+        {/* Profile Menu */}
+        <div ref={menuRef} className="relative">
+          <div
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="cursor-pointer flex items-center gap-2"
+          >
+            {user?.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt="User"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-purple-400 hover:scale-105 transition"
+              />
+            ) : (
+              <FaUserCircle className="text-gray-300 text-3xl hover:text-purple-400 transition" />
+            )}
           </div>
 
-          {/* Profile Menu */}
-          <div ref={menuRef} className="relative">
-            <div
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="cursor-pointer flex items-center gap-2"
-            >
-              {user?.photoURL ? (
-                <img
-                  src={user.photoURL}
-                  alt="User"
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-purple-400 hover:scale-105 transition"
-                />
-              ) : (
-                <FaUserCircle className="text-gray-300 text-3xl hover:text-purple-400 transition" />
-              )}
-            </div>
-            
-            <AnimatePresence>
-              {menuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                  className="
-                    absolute right-0 top-full mt-3
-                    bg-black backdrop-blur-2xl 
-                    border border-white rounded-2xl shadow-xl 
-                    w-64 sm:w-72 
-                    p-4 sm:p-5
-                    text-center z-50
-                  "
-                >
-                  <div className="flex flex-col items-center justify-center">
-                    {user?.photoURL && (
-                      <img
-                        src={user.photoURL}
-                        alt="Profile"
-                        className="w-14 h-14 rounded-full mb-3 border border-purple-400 object-cover"
-                      />
-                    )}
-                    <h3 className="text-white font-semibold text-base sm:text-lg">
-                      {user?.displayName || "User"}
-                    </h3>
-                    <p className="text-gray-400 text-xs sm:text-sm mb-3">
-                      {user?.email}
-                    </p>
-                  
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center justify-center gap-2 text-red-400 hover:text-red-500 border border-red-500/30 hover:bg-red-500/10 rounded-full py-1.5 px-4 text-xs sm:text-sm font-medium transition mt-2 w-full sm:w-auto"
-                    >
-                      <FaSignOutAlt /> Logout
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </nav>
+          <AnimatePresence>
+            {menuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="
+                  absolute right-0 top-full mt-3
+                  bg-black backdrop-blur-2xl 
+                  border border-white/10 rounded-2xl shadow-xl 
+                  w-64 sm:w-72 
+                  p-5
+                  text-center z-50
+                "
+              >
+                <div className="flex flex-col items-center justify-center">
+                  {user?.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt="Profile"
+                      className="w-16 h-16 rounded-full mb-3 border border-purple-400 object-cover"
+                    />
+                  ) : (
+                    <FaUserCircle className="text-gray-400 text-6xl mb-3" />
+                  )}
+
+                  <h3 className="text-white font-semibold text-lg">
+                    {displayName}
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4">{displayEmail}</p>
+
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center justify-center gap-2 text-red-400 hover:text-red-500 border border-red-500/30 hover:bg-red-500/10 rounded-full py-2 px-5 text-sm font-medium transition mt-2"
+                  >
+                    <FaSignOutAlt /> Logout
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </nav>
 
       {/* Main Section */}
       <main className="flex flex-col items-center justify-center flex-grow text-center px-4 sm:px-8 py-8 sm:py-12">
@@ -147,7 +179,7 @@ const HomePage = () => {
           <h1 className="text-3xl sm:text-5xl font-extrabold mb-3 leading-tight">
             Welcome to{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
-              OpenWeatherInsights
+              OpenWeather Insights
             </span>
           </h1>
           <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-3">

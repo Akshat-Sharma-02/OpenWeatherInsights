@@ -64,6 +64,23 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+// Find user
+app.get("/api/user", async (req, res) => {
+  try {
+    const email = req.query.email;
+    if (!email) return res.status(400).json({ message: "Email required" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({ name: user.name, email: user.email });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 // 🧱 Serve React build on production (for Vercel / Render)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

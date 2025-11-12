@@ -5,31 +5,56 @@ import { FcGoogle } from "react-icons/fc";
 import { IoArrowBack } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { auth, googleProvider, githubProvider, signInWithPopup } from "../firebase";
+import { useAuth } from "../context/AuthContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { setUser } = useAuth(); // ✅ Access context
 
+  // 🔹 Handle Email + Password Login (MongoDB backend)
   const handleEmailLogin = async (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value.trim();
+
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
 
     try {
-      const res = await axios.post("https://openweatherinsights.onrender.com/api/login", { email, password });
-      alert(res.data.message);
-      navigate("/home");
+      const res = await axios.post(
+        "https://openweatherinsights.onrender.com/api/login",
+        { email, password }
+      );
+
+      if (res.status === 200) {
+        const newUser = { email, type: "mongo" };
+        localStorage.setItem("user", JSON.stringify(newUser)); // ✅ Persist Mongo user
+        setUser(newUser); // ✅ Update context
+        alert("✅ Login successful!");
+        navigate("/home");
+      }
     } catch (err) {
+      console.error("❌ Email login error:", err);
       alert(err.response?.data?.message || "Login failed");
     }
   };
 
+  // 🔹 Handle OAuth Login (Firebase)
   const handleLogin = async (provider) => {
     try {
       const result = await signInWithPopup(auth, provider);
-      console.log("✅ User:", result.user);
+      const userData = result.user;
+      console.log("✅ Firebase User:", userData);
+
+      setUser(userData); // ✅ Update context
+      localStorage.setItem("user", JSON.stringify(userData)); // ✅ Persist Firebase user
+
+      alert("✅ Login successful!");
       navigate("/home");
     } catch (error) {
-      console.error("❌ Login Error:", error);
+      console.error("❌ OAuth Login Error:", error);
       alert(error.message);
     }
   };
@@ -43,7 +68,7 @@ const LoginPage = () => {
       }}
     >
       <div className="w-full max-w-md h-[95vh] bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl p-8 flex flex-col justify-center relative">
-        {/* Back Button */}
+        {/* 🔙 Back Button */}
         <button
           onClick={() => navigate("/")}
           className="absolute top-5 left-5 flex items-center gap-2 text-gray-400 hover:text-white transition text-sm font-medium"
@@ -51,7 +76,7 @@ const LoginPage = () => {
           <IoArrowBack size={18} className="text-purple-400" /> Back
         </button>
 
-        {/* Content */}
+        {/* 💬 Header */}
         <div className="mt-8">
           <h1 className="text-4xl font-bold text-center mb-2 tracking-tight">
             Welcome Back
@@ -60,7 +85,7 @@ const LoginPage = () => {
             Sign in to your account to continue your journey
           </p>
 
-          {/* OAuth Buttons */}
+          {/* 🌐 OAuth Buttons */}
           <div className="flex flex-col gap-3 mb-6">
             <button
               onClick={() => handleLogin(githubProvider)}
@@ -77,14 +102,14 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {/* Divider */}
+          {/* 🔸 Divider */}
           <div className="flex items-center my-6">
             <div className="grow h-px bg-gray-700"></div>
             <span className="px-3 text-gray-500 text-sm">or</span>
             <div className="grow h-px bg-gray-700"></div>
           </div>
 
-          {/* Email Login Form */}
+          {/* 📧 Email Login Form */}
           <form onSubmit={handleEmailLogin} className="flex flex-col gap-4">
             <div>
               <label className="block text-gray-300 mb-1 text-sm">Email *</label>
@@ -93,8 +118,10 @@ const LoginPage = () => {
                 type="email"
                 placeholder="you@example.com"
                 className="w-full px-4 py-2.5 bg-black/40 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                required
               />
             </div>
+
             <div>
               <label className="block text-gray-300 mb-1 text-sm">Password *</label>
               <input
@@ -102,8 +129,10 @@ const LoginPage = () => {
                 type="password"
                 placeholder="••••••••"
                 className="w-full px-4 py-2.5 bg-black/40 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+                required
               />
             </div>
+
             <button
               type="submit"
               className="mt-4 w-full bg-purple-600 hover:bg-purple-700 transition text-white font-semibold py-2.5 rounded-xl shadow-lg"
@@ -113,7 +142,7 @@ const LoginPage = () => {
           </form>
         </div>
 
-        {/* Footer Link */}
+        {/* 🔗 Footer */}
         <p className="text-center text-gray-400 text-sm mt-8">
           Don’t have an account?{" "}
           <Link to="/signup" className="text-purple-400 hover:underline">

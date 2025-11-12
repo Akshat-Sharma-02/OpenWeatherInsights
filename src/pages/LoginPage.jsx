@@ -89,6 +89,7 @@ const LoginPage = () => {
             <div>
               <label className="block text-gray-300 mb-1 text-sm">Email *</label>
               <input
+                name="email"
                 type="email"
                 placeholder="you@example.com"
                 className="w-full px-4 py-2.5 bg-black/40 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -97,6 +98,7 @@ const LoginPage = () => {
             <div>
               <label className="block text-gray-300 mb-1 text-sm">Password *</label>
               <input
+                name="password"
                 type="password"
                 placeholder="••••••••"
                 className="w-full px-4 py-2.5 bg-black/40 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"

@@ -35,7 +35,10 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center text-white p-4">
+    <div className="min-h-screen flex items-center justify-center text-white p-4" style={{
+        background:
+          "radial-gradient(circle at center, rgba(107, 33, 168, 0.35) 0%, rgba(0, 0, 0, 0.95) 75%)",
+      }}>
       <div className="w-full max-w-md bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl p-8">
         <button
           onClick={() => navigate("/")}

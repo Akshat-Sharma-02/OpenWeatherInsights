@@ -15,7 +15,7 @@ const LoginPage = () => {
     const password = e.target.password.value;
 
     try {
-      const res = await axios.post("/api/login", { email, password });
+      const res = await axios.post("https://openweatherinsights.onrender.com/api/login", { email, password });
       alert(res.data.message);
       navigate("/home");
     } catch (err) {

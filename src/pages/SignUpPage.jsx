@@ -16,7 +16,7 @@ const SignUpPage = () => {
   const handleEmailSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/signup", form);
+      const res = await axios.post("https://openweatherinsights.onrender.com/api/signup", form);
       alert(res.data.message);
       navigate("/login");
     } catch (err) {

@@ -11,7 +11,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth(); // ✅ Access context
 
-  // 🔹 Handle Email + Password Login (MongoDB backend)
+  // Handle Email + Password Login (MongoDB backend)
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     const email = e.target.email.value.trim();
@@ -41,7 +41,7 @@ const LoginPage = () => {
     }
   };
 
-  // 🔹 Handle OAuth Login (Firebase)
+  // Handle OAuth Login (Firebase)
   const handleLogin = async (provider) => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -68,7 +68,7 @@ const LoginPage = () => {
       }}
     >
       <div className="w-full max-w-md h-[95vh] bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl p-8 flex flex-col justify-center relative">
-        {/* 🔙 Back Button */}
+        {/* Back Button */}
         <button
           onClick={() => navigate("/")}
           className="absolute top-5 left-5 flex items-center gap-2 text-gray-400 hover:text-white transition text-sm font-medium"
@@ -76,7 +76,7 @@ const LoginPage = () => {
           <IoArrowBack size={18} className="text-purple-400" /> Back
         </button>
 
-        {/* 💬 Header */}
+        {/* Header */}
         <div className="mt-8">
           <h1 className="text-4xl font-bold text-center mb-2 tracking-tight">
             Welcome Back
@@ -85,7 +85,7 @@ const LoginPage = () => {
             Sign in to your account to continue your journey
           </p>
 
-          {/* 🌐 OAuth Buttons */}
+          {/* OAuth Buttons */}
           <div className="flex flex-col gap-3 mb-6">
             <button
               onClick={() => handleLogin(githubProvider)}
@@ -102,14 +102,14 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {/* 🔸 Divider */}
+          {/* Divider */}
           <div className="flex items-center my-6">
             <div className="grow h-px bg-gray-700"></div>
             <span className="px-3 text-gray-500 text-sm">or</span>
             <div className="grow h-px bg-gray-700"></div>
           </div>
 
-          {/* 📧 Email Login Form */}
+          {/* Email Login Form */}
           <form onSubmit={handleEmailLogin} className="flex flex-col gap-4">
             <div>
               <label className="block text-gray-300 mb-1 text-sm">Email *</label>
@@ -142,7 +142,7 @@ const LoginPage = () => {
           </form>
         </div>
 
-        {/* 🔗 Footer */}
+        {/* Footer */}
         <p className="text-center text-gray-400 text-sm mt-8">
           Don’t have an account?{" "}
           <Link to="/signup" className="text-purple-400 hover:underline">

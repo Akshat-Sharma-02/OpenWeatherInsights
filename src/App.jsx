@@ -28,7 +28,7 @@ const App = () => {
     <Router>
       <MouseGlow />
       <Routes>
-        {/* ✅ Redirect logged-in users from "/" to "/home" */}
+        {/* Redirect logged-in users from "/" to "/home" */}
         <Route
           path="/"
           element={user ? <Navigate to="/home" replace /> : <LandingPage />}
@@ -38,7 +38,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
 
-        {/* ✅ Protected Pages */}
+        {/* Protected Pages */}
         <Route
           path="/home"
           element={

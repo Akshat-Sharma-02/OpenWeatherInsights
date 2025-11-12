@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { Typewriter } from "react-simple-typewriter"; // ✨ Typewriter import
 import { useAuth } from "../context/AuthContext";
 import {
   FaUserCircle,
@@ -15,20 +14,18 @@ import {
 } from "react-icons/fa";
 
 const HomePage = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [mongoUserData, setMongoUserData] = useState({ name: "", email: "" });
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
-  // 🔹 Fetch MongoDB user details if email/password login
+  // Fetch MongoDB user details
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("user"));
     if (localUser?.type === "mongo" && localUser.email) {
       axios
-        .get(
-          `https://openweatherinsights.onrender.com/api/user?email=${localUser.email}`
-        )
+        .get(`https://openweatherinsights.onrender.com/api/user?email=${localUser.email}`)
         .then((res) => {
           setMongoUserData({
             name: res.data.name,
@@ -39,16 +36,17 @@ const HomePage = () => {
     }
   }, []);
 
-  // 🔸 Logout function
+  // Logout function — instant redirect
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Firebase logout
-    } catch {}
-    localStorage.removeItem("user"); // Remove Mongo session
-    navigate("/");
+      await logout();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
-  // ✅ Close dropdown on outside click
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -59,12 +57,9 @@ const HomePage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ✅ Get display name + email based on login type
-  const displayName =
-    mongoUserData.name || user?.displayName || "User";
-
-  const displayEmail =
-    mongoUserData.email || user?.email || "";
+  // Get display name + email
+  const displayName = mongoUserData.name || user?.displayName || "User";
+  const displayEmail = mongoUserData.email || user?.email || "";
 
   const cards = [
     {
@@ -135,14 +130,7 @@ const HomePage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
-                className="
-                  absolute right-0 top-full mt-3
-                  bg-black backdrop-blur-2xl 
-                  border border-white/10 rounded-2xl shadow-xl 
-                  w-64 sm:w-72 
-                  p-5
-                  text-center z-50
-                "
+                className="absolute right-0 top-full mt-3 bg-black backdrop-blur-2xl border border-white/10 rounded-2xl shadow-xl w-64 sm:w-72 p-5 text-center z-50"
               >
                 <div className="flex flex-col items-center justify-center">
                   {user?.photoURL ? (
@@ -154,12 +142,8 @@ const HomePage = () => {
                   ) : (
                     <FaUserCircle className="text-gray-400 text-6xl mb-3" />
                   )}
-
-                  <h3 className="text-white font-semibold text-lg">
-                    {displayName}
-                  </h3>
+                  <h3 className="text-white font-semibold text-lg">{displayName}</h3>
                   <p className="text-gray-400 text-sm mb-4">{displayEmail}</p>
-
                   <button
                     onClick={handleLogout}
                     className="flex items-center justify-center gap-2 text-red-400 hover:text-red-500 border border-red-500/30 hover:bg-red-500/10 rounded-full py-2 px-5 text-sm font-medium transition mt-2"
@@ -177,12 +161,27 @@ const HomePage = () => {
       <main className="flex flex-col items-center justify-center flex-grow text-center px-4 sm:px-8 py-8 sm:py-12">
         <div className="mb-10 sm:mb-16">
           <h1 className="text-3xl sm:text-5xl font-extrabold mb-3 leading-tight">
-            Welcome to{" "}
+            {/* Static part */}
+            <span className="text-white">Welcome </span>
+
+            {/* Animated part */}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
-              OpenWeather Insights
+              <Typewriter
+                words={[
+                  `to OpenWeather Insights`,
+                  `, ${displayName}`,
+                ]}
+                loop={true}
+                cursor
+                cursorStyle="|"
+                typeSpeed={80}
+                deleteSpeed={80}
+                delaySpeed={2500}
+              />
             </span>
           </h1>
-          <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-3">
+
+          <p className="text-gray-400 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-3 mt-4">
             Explore real-time weather data, forecasts, air quality details, and
             location insights — all powered by the OpenWeather API.
           </p>

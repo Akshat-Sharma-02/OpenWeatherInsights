@@ -13,7 +13,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🧠 MongoDB connection
+// MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -22,7 +22,7 @@ mongoose
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ MongoDB Error:", err));
 
-// 🧾 User Schema
+// User Schema
 const userSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", userSchema);
 
-// 🟢 SIGNUP ROUTE
+// SIGNUP ROUTE
 app.post("/api/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -47,7 +47,7 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
-// 🟢 LOGIN ROUTE
+// LOGIN ROUTE
 app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -81,7 +81,7 @@ app.get("/api/user", async (req, res) => {
 });
 
 
-// 🧱 Serve React build on production (for Vercel / Render)
+// Serve React build on production (for Vercel / Render)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const buildPath = path.join(__dirname, "dist"); // or "build" if using CRA
@@ -91,6 +91,6 @@ if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => res.sendFile(path.join(buildPath, "index.html")));
 }
 
-// 🚀 Start server
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
